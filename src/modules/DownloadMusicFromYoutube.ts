@@ -7,8 +7,11 @@ export type DownloadMusicFromYoutubeAfterDownload = (
     stderr:string
 ) => void;
 
+let switcher = 0
+
 export function downloadMusicFromYoutube(url:string,afterDownload: DownloadMusicFromYoutubeAfterDownload) {
-    exec(`python src/services/youtube.py ${url}`,(error, stdout, stderr) => {
+    exec(`python src/services/youtube.py ${url} youtube_music_${switcher}`,(error, stdout, stderr) => {
         afterDownload(error, stdout, stderr);
+        switcher = switcher === 0 ? 1 : 0
     })
 }

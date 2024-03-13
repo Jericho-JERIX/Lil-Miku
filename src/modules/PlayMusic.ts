@@ -1,9 +1,11 @@
 // import {} from '@discordjs/voice'
 
-import { AudioPlayer, createAudioPlayer, createAudioResource, joinVoiceChannel } from "@discordjs/voice";
+import { AudioPlayer, PlayerSubscription, VoiceConnection, createAudioPlayer, createAudioResource, joinVoiceChannel } from "@discordjs/voice";
 import { BaseInteraction, CacheType, InternalDiscordGatewayAdapterCreator, TextBasedChannel } from "discord.js";
 
-export function playMusic(channelId:string,guildId:string,voiceAdapterCreator:InternalDiscordGatewayAdapterCreator) {
+let switcher = 0
+
+export function playMusic(channelId:string,guildId:string,voiceAdapterCreator:InternalDiscordGatewayAdapterCreator):PlayerSubscription | undefined {
 
     const connection = joinVoiceChannel({
         channelId: channelId,
@@ -12,11 +14,10 @@ export function playMusic(channelId:string,guildId:string,voiceAdapterCreator:In
     });
 
     const player = createAudioPlayer()
-    const resource = createAudioResource("src/music/youtube_music.opus")
+    const resource = createAudioResource(`src/music/youtube_music_${switcher}.opus`)
 
-    console.log(resource)
+    switcher = switcher === 0 ? 1 : 0
 
     player.play(resource)
-    connection.subscribe(player)
-
+    return connection.subscribe(player)
 }
