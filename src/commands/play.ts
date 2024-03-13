@@ -20,16 +20,21 @@ export const Play: SlashCommand = {
         const url = interaction.options.getString("url") as string
         const voiceChannelId = (interaction.member as GuildMember).voice.channel?.id;
 
-        if (!interaction.channel || !interaction.guild || !voiceChannelId) {
-            return
-        }
+        
 
-        downloadMusicFromYoutube(url)
-        playMusic(
-            voiceChannelId,
-            interaction.guild?.id,
-            interaction.guild?.voiceAdapterCreator
-        )
+        downloadMusicFromYoutube(url,() => {
+            
+            if (!interaction.channel || !interaction.guild || !voiceChannelId) {
+                return
+            }
+
+            playMusic(
+                voiceChannelId,
+                interaction.guild?.id,
+                interaction.guild?.voiceAdapterCreator
+            )
+        })
+        
         
     },
 }

@@ -5,7 +5,7 @@ def download_music(url, path):
     ydl_opts = {
     'format': 'bestaudio/best',
     'paths': {'home': '{}'.format(path)},
-    'outtmpl': "youtube_music.opus",
+    'outtmpl': "youtube_music",
     'postprocessors': [{
         'key': 'FFmpegExtractAudio'
     }]
