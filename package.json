@@ -1,10 +1,12 @@
 {
 	"dependencies": {
+		"@discordjs/voice": "^0.16.1",
 		"axios": "^1.4.0",
 		"discord.js": "^14.10.2",
-		"dotenv": "^16.0.3"
+		"dotenv": "^16.0.3",
+		"libsodium-wrappers": "^0.7.13"
 	},
-	"name": "docket-bot",
+	"name": "lil-miku",
 	"version": "1.0.0",
 	"main": "build/index.js",
 	"devDependencies": {
@@ -20,14 +22,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Jericho-JERIX/Docket-Bot.git"
+		"url": "git+https://github.com/Jericho-JERIX/Lil-Miku.git"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/Jericho-JERIX/Docket-Bot/issues"
+		"url": "https://github.com/Jericho-JERIX/Lil-Miku/issues"
 	},
-	"homepage": "https://github.com/Jericho-JERIX/Docket-Bot#readme",
+	"homepage": "https://github.com/Jericho-JERIX/Lil-Miku#readme",
 	"description": ""
 }

@@ -9,7 +9,11 @@ dotenv.config();
 let commands: SlashCommandObject;
 
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildIntegrations],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildIntegrations,
+		GatewayIntentBits.GuildVoiceStates,
+	],
 });
 
 client.once(Events.ClientReady, async (client) => {

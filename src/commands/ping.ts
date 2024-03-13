@@ -49,7 +49,7 @@ function PingMenuSelect(): ActionRowBuilder<any> {
 
 export const Ping: SlashCommand = {
 	name: "ping",
-	description: "Replies with pong!!!",
+	description: "Replies with pong!!! hhhh",
 	options: [
 		{
 			name: "message",
