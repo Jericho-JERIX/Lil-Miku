@@ -39,8 +39,6 @@ export const Play: SlashCommand = {
                 logMessage += stdout.slice(0,1900)
             }
             interaction.channel.send("```\n" + logMessage +"\n```")
-
-            console.log("Play music")
             
             playMusic(
                 voiceChannelId,

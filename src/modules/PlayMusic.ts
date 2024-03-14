@@ -2,6 +2,7 @@
 
 import {
 	AudioPlayer,
+	AudioPlayerStatus,
 	PlayerSubscription,
 	VoiceConnection,
 	createAudioPlayer,
@@ -14,26 +15,32 @@ import {
 	InternalDiscordGatewayAdapterCreator,
 	TextBasedChannel,
 } from "discord.js";
+import { musicQueue } from "./queues/MusicQueue";
 
 
 export function playMusic(
-	channelId: string,
-	guildId: string,
-	voiceAdapterCreator: InternalDiscordGatewayAdapterCreator,
-	videoId: string,
+	connection: VoiceConnection,
+	player: AudioPlayer,
 ): PlayerSubscription | undefined {
-	const connection = joinVoiceChannel({
-		channelId: channelId,
-		guildId: guildId,
-		adapterCreator: voiceAdapterCreator,
-	});
 
-	const player = createAudioPlayer();
-	const resource = createAudioResource(
-		`src/music/${videoId}.opus`
-	);
+	// const music = musicQueue.dequeue()
 
+	// const resource = createAudioResource(
+	// 	`src/music/${videoId}.opus`
+	// );
 
-	player.play(resource);
+	player.on(AudioPlayerStatus.Idle, () => {
+
+		if (musicQueue.empty()) {
+			return
+		}
+
+		const resource = createAudioResource(
+			`src/music/${musicQueue.dequeue()?.videoId}.opus`
+		);
+		player.play(resource)
+	})
+
+	// player.play(resource);
 	return connection.subscribe(player);
 }
