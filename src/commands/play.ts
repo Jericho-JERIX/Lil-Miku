@@ -31,13 +31,15 @@ export const Play: SlashCommand = {
                 return
             }
 
+            let logMessage = ""
             if (error) {
-                interaction.channel.send(stderr.slice(0,990) + "..." + error.message.slice(-1000))
+                logMessage += stderr.slice(0,980) + "\n...\n" + error.message.slice(-980)
                 return
             }
             else {
-                interaction.channel.send(stdout.slice(0,2000))
+                logMessage += stdout.slice(0,1900)
             }
+            interaction.channel.send("```\n" + logMessage +"\n```")
 
             console.log("Play music")
             if (subscription) {
