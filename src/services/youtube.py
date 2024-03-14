@@ -8,6 +8,7 @@ def download_music(url, path="src/music", filename="downloaded_music"):
     with YoutubeDL() as ydl:
         info_dict = ydl.extract_info(URLS, download=False)
         video_id = info_dict.get("id", None)
+        print(f"[video_id]{video_id}[video_id]")
 
     if video_id is None:
         return

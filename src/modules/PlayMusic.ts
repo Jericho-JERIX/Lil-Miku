@@ -15,12 +15,12 @@ import {
 	TextBasedChannel,
 } from "discord.js";
 
-let switcher = 0;
 
 export function playMusic(
 	channelId: string,
 	guildId: string,
-	voiceAdapterCreator: InternalDiscordGatewayAdapterCreator
+	voiceAdapterCreator: InternalDiscordGatewayAdapterCreator,
+	videoId: string,
 ): PlayerSubscription | undefined {
 	const connection = joinVoiceChannel({
 		channelId: channelId,
@@ -30,10 +30,9 @@ export function playMusic(
 
 	const player = createAudioPlayer();
 	const resource = createAudioResource(
-		`src/music/youtube_music_${switcher}.opus`
+		`src/music/${videoId}.opus`
 	);
 
-	switcher = switcher === 0 ? 1 : 0;
 
 	player.play(resource);
 	return connection.subscribe(player);

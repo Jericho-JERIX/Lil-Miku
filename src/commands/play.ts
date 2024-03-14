@@ -4,7 +4,6 @@ import { playMusic } from "../modules/PlayMusic";
 import { downloadMusicFromYoutube } from "../modules/DownloadMusicFromYoutube";
 import { PlayerSubscription, VoiceConnection } from "@discordjs/voice";
 
-let subscription: PlayerSubscription | undefined = undefined
 
 export const Play: SlashCommand = {
     name: "play",
@@ -42,14 +41,12 @@ export const Play: SlashCommand = {
             interaction.channel.send("```\n" + logMessage +"\n```")
 
             console.log("Play music")
-            if (subscription) {
-                subscription.unsubscribe()
-            }
-
-            subscription = playMusic(
+            
+            playMusic(
                 voiceChannelId,
                 interaction.guild?.id,
-                interaction.guild?.voiceAdapterCreator
+                interaction.guild?.voiceAdapterCreator,
+                stdout.split("[video_id]")[1]
             )
         })
         
