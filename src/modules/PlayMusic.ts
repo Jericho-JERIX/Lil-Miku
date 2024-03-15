@@ -5,17 +5,9 @@ import {
 	AudioPlayerStatus,
 	PlayerSubscription,
 	VoiceConnection,
-	createAudioPlayer,
-	createAudioResource,
-	joinVoiceChannel,
+	createAudioResource
 } from "@discordjs/voice";
-import {
-	BaseInteraction,
-	CacheType,
-	InternalDiscordGatewayAdapterCreator,
-	TextBasedChannel,
-} from "discord.js";
-import { musicQueue } from "./queues/MusicQueue";
+import { musicQueue } from "../data/MusicQueue";
 
 
 export function playMusic(
@@ -29,14 +21,20 @@ export function playMusic(
 	// 	`src/music/${videoId}.opus`
 	// );
 
-	player.on(AudioPlayerStatus.Idle, () => {
+	const initialResource = createAudioResource(
+		`src/music/${musicQueue.dequeue()?.id}.opus`
+	);
+	player.play(initialResource)
 
+	player.on(AudioPlayerStatus.Idle, () => {
+		console.log('idle')
+		console.log('playlist',musicQueue.playlist)
 		if (musicQueue.empty()) {
 			return
 		}
 
 		const resource = createAudioResource(
-			`src/music/${musicQueue.dequeue()?.videoId}.opus`
+			`src/music/${musicQueue.dequeue()?.id}.opus`
 		);
 		player.play(resource)
 	})
