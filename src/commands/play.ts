@@ -4,6 +4,10 @@ import { playMusic } from "../modules/PlayMusic";
 import { downloadMusicFromYoutube } from "../modules/DownloadMusicFromYoutube";
 import { PlayerSubscription, VoiceConnection } from "@discordjs/voice";
 
+/*
+- If there no current connection, create a new one and start the music
+- If there is a connection, add the music to the queue
+*/
 
 export const Play: SlashCommand = {
     name: "play",
@@ -11,7 +15,7 @@ export const Play: SlashCommand = {
     options: [
         {
             name: "url",
-			description: "Type something here",
+			description: "Put Youtube video URL here",
 			type: ApplicationCommandOptionType.String,
 			required: true
         }
