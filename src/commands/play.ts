@@ -40,10 +40,11 @@ export const Play: SlashCommand = {
         // console.log("connection",connection)
         // console.log("player",player)
 
-		if (!connection) {
-			if (!interaction.channel || !interaction.guild || !voiceChannelId) {
-				return;
-			}
+		if (!interaction.channel || !interaction.guild || !voiceChannelId) {
+			return;
+		}
+
+		if (!connection || connection.state.status === "disconnected") {
 			const connectionResult = createVoiceChannelConnection(
 				voiceChannelId,
 				interaction.guild?.id,
@@ -53,9 +54,17 @@ export const Play: SlashCommand = {
             player = connectionResult.player;
 
             playMusic(connection, player);
-		}
-        else if (player && player.state.status === "idle") {
-            playMusic(connection, player);
+		}		
+		
+		if (player) {
+			console.log("Status", player.state.status);
+			if (player.state.status === "idle"){
+            	playMusic(connection, player);
+			}
+			else if (player.state.status === "autopaused"){
+				console.log("Unpausing");
+				player.unpause();
+			}
         }
 	},
 };

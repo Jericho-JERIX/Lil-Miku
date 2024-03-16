@@ -15,15 +15,18 @@ export function playMusic(
 	player: AudioPlayer,
 ): PlayerSubscription | undefined {
 
-	// const music = musicQueue.dequeue()
 
-	// const resource = createAudioResource(
-	// 	`src/music/${videoId}.opus`
-	// );
-
-	const initialResource = createAudioResource(
-		`src/music/${musicQueue.dequeue()?.id}.opus`
-	);
+	let initialResource;
+	if (musicQueue.current) {
+		initialResource = createAudioResource(
+			`src/music/${musicQueue.current.id}.opus`
+		);
+	}
+	else {
+		initialResource = createAudioResource(
+			`src/music/${musicQueue.dequeue()?.id}.opus`
+		);
+	}
 	player.play(initialResource)
 
 	player.on(AudioPlayerStatus.Idle, () => {
