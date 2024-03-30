@@ -1,8 +1,13 @@
-// import { Ping } from "./src/interaction/commands/ping";
-import { downloadMusicFromYoutube } from './src/modules/DownloadMusicFromYoutube';
+// import { spawn } from "child_process";
 
-// console.log(Ping);
+// const result = spawn("python", ["test.py"]) // , {stdio: 'inherit'});
+// result.stdout.on('data', (data) => {
+// 	console.log(data.toString('utf-8'));
+//  });
 
-downloadMusicFromYoutube("https://www.youtube.com/watch?v=H6FUBWGSOIc",(a,b,c) => {
-    console.log("DONEEEE")
+import { spawn } from "child_process";
+
+const result = spawn("python", ["test.py"])
+result.stdout.on("data", (data) => {
+    console.log(data.toString())
 })
