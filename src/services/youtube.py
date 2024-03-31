@@ -1,5 +1,6 @@
 import sys
 from yt_dlp import YoutubeDL
+import json
 
 def download_music(url, path="src/music", filename="downloaded_music"):
 
@@ -8,9 +9,9 @@ def download_music(url, path="src/music", filename="downloaded_music"):
     with YoutubeDL() as ydl:
         info_dict = ydl.extract_info(URLS, download=False)
         video_id = info_dict["id"]
-        video_title = info_dict["title"]
-        # open("result.txt","w").write(video_title)
-        print(info_dict)
+        # video_title = info_dict["title"]
+        open("src/dumps/result.txt","w").write(json.dumps(info_dict))
+        # print(info_dict)
         # print(f"[video_id]{video_id}[video_id]")
         # print(f"[video_title]{video_title}[video_title]")
         # print(f"[video_title]{}[video_title]")

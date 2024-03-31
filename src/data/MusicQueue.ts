@@ -7,7 +7,11 @@ class MusicQueue {
 
     constructor() {
         this.current = null;
-        this.playlist = [];
+        this.playlist = [
+            {id: "zf8hXUUkVOs", title: "Bling"},
+            {id: "HWUnpsUvnFo", title: "คนไทย"},
+            {id: "Sz_kQuEM0mI", title: "Bye Bye"}
+        ];
     }
 
     add(song: DownloadedMetadata) {
