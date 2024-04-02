@@ -12,6 +12,7 @@ export type DownloadMusicFromYoutubeAfterDownloadCallback = (
 export type YTDLPDownloadedMetadata = {
 	id: string,
 	title: string,
+	duration: number,
 }
 
 export const downloadMusicFromYoutube:DownloadFunction = async (query) => {
@@ -30,13 +31,15 @@ export const downloadMusicFromYoutube:DownloadFunction = async (query) => {
 					
 					resolve({
 						id: result.id,
-						title: result.title
+						title: result.title,
+						duration: result.duration
 					})
 				}
 				else {
 					reject({
 						id: "",
 						title: "",
+						duration: 0
 					})
 				}
 			}

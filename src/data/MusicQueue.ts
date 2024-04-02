@@ -8,9 +8,9 @@ class MusicQueue {
     constructor() {
         this.current = null;
         this.playlist = [
-            {id: "zf8hXUUkVOs", title: "Bling"},
-            {id: "HWUnpsUvnFo", title: "คนไทย"},
-            {id: "Sz_kQuEM0mI", title: "Bye Bye"}
+            {id: "zf8hXUUkVOs", title: "Bling",duration: 214},
+            {id: "HWUnpsUvnFo", title: "คนไทย",duration: 185},
+            {id: "Sz_kQuEM0mI", title: "Bye Bye",duration: 124},
         ];
     }
 
