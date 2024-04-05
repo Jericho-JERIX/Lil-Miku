@@ -32,7 +32,7 @@ export const Play: SlashCommand = {
 	async onCommandExecuted(interaction) {
 		await interaction.deferReply();
 
-		const url = interaction.options.getString("url") as string;
+		const url = interaction.options.getString("query") as string;
 		const voiceChannelId = (interaction.member as GuildMember).voice.channel
 			?.id;
 
@@ -46,6 +46,7 @@ export const Play: SlashCommand = {
 			case "SEARCH":
 				const youtubeAPISearchResult = await YoutubeGoogleAPIService.search.video(searchResult.id)
 				downloadedMusicData = await downloadMusicFromYoutube(youtubeAPISearchResult[0].id.videoId);
+				console.log(downloadedMusicData)
 				musicQueue.add(downloadedMusicData);
 				break
 
