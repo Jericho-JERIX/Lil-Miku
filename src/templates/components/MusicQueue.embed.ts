@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { musicQueue } from "../../data/MusicQueue";
+import { randomEmbedColor } from "../../modules/RandomColor";
 
 export function MusicDashboardEmbed({
     nowPlaying,
@@ -11,13 +11,16 @@ export function MusicDashboardEmbed({
     duration:string
 }):EmbedBuilder{
 
+    console.log(nowPlaying,queue,duration)
+
     return new EmbedBuilder()
+        .setColor(randomEmbedColor())
         .setTitle("\\🎵 Music Queue")
         .addFields([
             {name:"\\🔴 Now Playing:",value: nowPlaying,inline:false},
         ])
         .addFields([
-            {name:"Queue",value: queue,inline:true},
+            {name:"📄 Queue",value: queue,inline:true},
             {name:"Duration",value:duration,inline:true},
         ])
 }

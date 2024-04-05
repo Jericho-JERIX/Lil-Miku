@@ -5,42 +5,69 @@ import {
 	AudioPlayerStatus,
 	PlayerSubscription,
 	VoiceConnection,
-	createAudioResource
+	createAudioResource,
 } from "@discordjs/voice";
 import { musicQueue } from "../data/MusicQueue";
-
+import { DownloadedMetadata } from "../types/DownloadedMetadata";
+import { ChatInputCommandInteraction } from "discord.js";
+import { NowPlayingEmbed } from "../templates/components/NowPlaying.embed";
 
 export function playMusic(
 	connection: VoiceConnection,
 	player: AudioPlayer,
+	interaction: ChatInputCommandInteraction
 ): PlayerSubscription | undefined {
-
-
 	let initialResource;
+	let initialResourceMeta: DownloadedMetadata | undefined;
 	if (musicQueue.current) {
+		initialResourceMeta = musicQueue.current;
 		initialResource = createAudioResource(
-			`src/music/${musicQueue.current.id}.opus`
+			`src/music/${initialResourceMeta.id}.opus`
+		);
+	} else {
+		initialResourceMeta = musicQueue.dequeue();
+		initialResource = createAudioResource(
+			`src/music/${initialResourceMeta?.id}.opus`
 		);
 	}
-	else {
-		initialResource = createAudioResource(
-			`src/music/${musicQueue.dequeue()?.id}.opus`
-		);
+
+	player.play(initialResource);
+
+	if (initialResourceMeta) {
+		interaction.channel?.send({
+			embeds: [
+				NowPlayingEmbed({
+					musicName: initialResourceMeta.title,
+					videoId: initialResourceMeta.id,
+				}),
+			],
+		});
 	}
-	player.play(initialResource)
 
 	player.on(AudioPlayerStatus.Idle, () => {
-		console.log('idle')
-		console.log('playlist',musicQueue.playlist)
+		console.log("idle");
+		console.log("playlist", musicQueue.playlist);
 		if (musicQueue.empty()) {
-			return
+			return;
 		}
 
+		let resourceMeta = musicQueue.dequeue();
 		const resource = createAudioResource(
-			`src/music/${musicQueue.dequeue()?.id}.opus`
+			`src/music/${resourceMeta?.id}.opus`
 		);
-		player.play(resource)
-	})
+
+		player.play(resource);
+		if (resourceMeta) {
+			interaction.channel?.send({
+				embeds: [
+					NowPlayingEmbed({
+						musicName: resourceMeta.title,
+						videoId: resourceMeta.id,
+					}),
+				],
+			});
+		}
+	});
 
 	// player.play(resource);
 	return connection.subscribe(player);
