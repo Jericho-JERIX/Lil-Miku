@@ -1,8 +1,8 @@
-import { musicQueue } from "../data/MusicQueue";
 import { convertSecondToHHMMSS } from "../modules/TimeFormat";
 import { emojiedNumber } from "../modules/NumberEmoji";
 import { SlashCommand } from "../scripts/types/SlashCommand";
 import { MusicDashboardEmbed } from "../templates/components/MusicQueue.embed";
+import { GuildMusicQueueData } from "../data/GuildMusicQueue";
 
 export const Queue: SlashCommand = {
     name: "queue",
@@ -10,7 +10,11 @@ export const Queue: SlashCommand = {
     options: [],
 
     async onCommandExecuted(interaction) {
-        const queue = musicQueue.getPlaylist();
+
+        if (!interaction.guildId) return
+
+        const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(interaction.guildId)
+        const queue = musicQueue.getPlaylist() //musicQueue.getPlaylist();
 
         const currentSong = musicQueue.getCurrent();
         const queueString = queue.map((song, index) => {
@@ -27,13 +31,14 @@ export const Queue: SlashCommand = {
         console.log(!!queueString ? queueString : "*No music in queue*")
         console.log("-------")
         await interaction.reply({
-            embeds:[
-                MusicDashboardEmbed({
-                    nowPlaying: currentSong?.title || "*No music playing*",
-                    queue: !!queueString ? queueString : "*No music in queue*",
-                    duration: durationString ? durationString : "-"
-                })
-            ]
+            // embeds:[
+            //     MusicDashboardEmbed({
+            //         nowPlaying: currentSong?.title || "*No music playing*",
+            //         queue: !!queueString ? queueString : "*No music in queue*",
+            //         duration: durationString ? durationString : "-"
+            //     })
+            // ]
+            content: `nowPlaying: ${currentSong?.title || "*No music playing*"}*\nqueue: ${!!queueString ? queueString : "*No music in queue*"}\nduration: ${durationString ? durationString : "-"}`
         })
     }
 }

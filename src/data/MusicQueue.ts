@@ -1,6 +1,6 @@
 import { DownloadedMetadata } from "../types/DownloadedMetadata";
 
-class MusicQueue {
+export class MusicQueue {
 
     current: DownloadedMetadata | null
     playlist: DownloadedMetadata[]
@@ -36,4 +36,4 @@ class MusicQueue {
     }
 }
 
-export const musicQueue = new MusicQueue()
+// export const musicQueue = new MusicQueue()

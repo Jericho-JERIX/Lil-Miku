@@ -2,12 +2,20 @@ import { ApplicationCommandOptionType, GuildMember, User } from "discord.js";
 import { SlashCommand } from "../scripts/types/SlashCommand";
 import { playMusic } from "../modules/PlayMusic";
 import { downloadMusicFromYoutube } from "../downloads/DownloadMusicFromYoutube";
-import { AudioPlayer, PlayerSubscription, VoiceConnection } from "@discordjs/voice";
-import { musicQueue } from "../data/MusicQueue";
+import {
+	AudioPlayer,
+	PlayerSubscription,
+	VoiceConnection,
+} from "@discordjs/voice";
+// import { musicQueue } from "../data/MusicQueue";
 import { createVoiceChannelConnection } from "../modules/CreateVoiceChannelConnection";
-import { YoutubeGoogleAPIService, YoutubeService } from "../services/Youtube.service";
+import {
+	YoutubeGoogleAPIService,
+	YoutubeService,
+} from "../services/Youtube.service";
 import { DownloadedMetadata } from "../types/DownloadedMetadata";
 import { AddMusicEmbed } from "../templates/components/AddMusic.embed";
+import { GuildMusicQueueData } from "../data/GuildMusicQueue";
 
 /*
 - If there no current connection, create a new one and start the music
@@ -23,7 +31,8 @@ export const Play: SlashCommand = {
 	options: [
 		{
 			name: "query",
-			description: "You can either paste URL or search from Youtube here.",
+			description:
+				"You can either paste URL or search from Youtube here.",
 			type: ApplicationCommandOptionType.String,
 			required: true,
 		},
@@ -32,33 +41,44 @@ export const Play: SlashCommand = {
 	async onCommandExecuted(interaction) {
 		await interaction.deferReply();
 
+		if (!interaction.guildId) return;
+
 		const url = interaction.options.getString("query") as string;
 		const voiceChannelId = (interaction.member as GuildMember).voice.channel
 			?.id;
 
-		const searchResult = YoutubeService.searchRecognizer(url)
-		
+		const searchResult = YoutubeService.searchRecognizer(url);
+		const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(
+			interaction.guildId
+		);
+
 		let downloadedMusicData: DownloadedMetadata | null = null;
 
-		console.log(searchResult)
+		console.log(searchResult);
 
-		switch(searchResult?.type) {
+		switch (searchResult?.type) {
 			case "SEARCH":
-				const youtubeAPISearchResult = await YoutubeGoogleAPIService.search.video(searchResult.id)
-				downloadedMusicData = await downloadMusicFromYoutube(youtubeAPISearchResult[0].id.videoId);
-				console.log(downloadedMusicData)
+				const youtubeAPISearchResult =
+					await YoutubeGoogleAPIService.search.video(searchResult.id);
+				downloadedMusicData = await downloadMusicFromYoutube(
+					youtubeAPISearchResult[0].id.videoId
+				);
+				console.log(downloadedMusicData);
 				musicQueue.add(downloadedMusicData);
-				break
+				break;
 
 			case "VIDEO":
 				downloadedMusicData = await downloadMusicFromYoutube(url);
 				musicQueue.add(downloadedMusicData);
-				break
+				break;
 		}
 
-		if (!downloadedMusicData) return
-
-		if (!interaction.channel || !interaction.guild || !voiceChannelId) {
+		if (
+			!downloadedMusicData ||
+			!interaction.channel ||
+			!interaction.guild ||
+			!voiceChannelId
+		) {
 			return;
 		}
 
@@ -68,31 +88,30 @@ export const Play: SlashCommand = {
 				interaction.guild?.id,
 				interaction.guild?.voiceAdapterCreator
 			);
-            connection = connectionResult.connection;
-            player = connectionResult.player;
+			connection = connectionResult.connection;
+			player = connectionResult.player;
 
-            playMusic(connection, player, interaction);
-		}		
-		
+			playMusic(connection, player, interaction);
+		}
+
 		if (player) {
 			console.log("Status", player.state.status);
-			if (player.state.status === "idle"){
-            	playMusic(connection, player, interaction);
-			}
-			else if (player.state.status === "autopaused"){
+			if (player.state.status === "idle") {
+				playMusic(connection, player, interaction);
+			} else if (player.state.status === "autopaused") {
 				console.log("Unpausing");
 				player.unpause();
 			}
-        }
+		}
 
 		await interaction.editReply({
-			embeds: [
-				AddMusicEmbed({
-					musicName: downloadedMusicData.title,
-					videoId: downloadedMusicData.id
-				})
-			]
-		})
-		
+			// embeds: [
+			// 	AddMusicEmbed({
+			// 		musicName: downloadedMusicData.title,
+			// 		videoId: downloadedMusicData.id,
+			// 	}),
+			// ],
+			content: `Add [${downloadedMusicData.title}](https://www.youtube.com/watch?v=${downloadedMusicData.id})`
+		});
 	},
 };

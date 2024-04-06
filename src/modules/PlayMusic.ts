@@ -7,10 +7,11 @@ import {
 	VoiceConnection,
 	createAudioResource,
 } from "@discordjs/voice";
-import { musicQueue } from "../data/MusicQueue";
+import { MusicQueue } from "../data/MusicQueue";
 import { DownloadedMetadata } from "../types/DownloadedMetadata";
 import { ChatInputCommandInteraction } from "discord.js";
 import { NowPlayingEmbed } from "../templates/components/NowPlaying.embed";
+import { GuildMusicQueueData } from "../data/GuildMusicQueue";
 
 export function playMusic(
 	connection: VoiceConnection,
@@ -19,6 +20,11 @@ export function playMusic(
 ): PlayerSubscription | undefined {
 	let initialResource;
 	let initialResourceMeta: DownloadedMetadata | undefined;
+
+	if (!interaction.guildId) return
+
+	const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(interaction.guildId)
+	
 	if (musicQueue.current) {
 		initialResourceMeta = musicQueue.current;
 		initialResource = createAudioResource(
