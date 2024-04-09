@@ -14,7 +14,7 @@ export function MusicDashboardEmbed({
     console.log(nowPlaying,queue,duration)
 
     return new EmbedBuilder()
-        .setColor(randomEmbedColor())
+        .setColor("Random")
         .setTitle("\\🎵 Music Queue")
         .addFields([
             {name:"\\🔴 Now Playing:",value: nowPlaying,inline:false},

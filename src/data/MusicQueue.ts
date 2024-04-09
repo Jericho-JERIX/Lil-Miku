@@ -34,6 +34,23 @@ export class MusicQueue {
     getCurrent() {
         return this.current
     }
+
+    alreadyInQueue(item:string | DownloadedMetadata):boolean {
+        if (typeof item === "string") {
+            return this.playlist.map((music) => music.id).includes(item)
+        }
+        else {
+            return this.playlist.includes(item)
+        }
+    }
+
+    get(id:string): DownloadedMetadata | undefined {
+        if (this.current?.id === id) return this.current
+        const result = this.playlist.filter((music) => music.id === id)
+        if (result.length === 0) return
+        return result[0]
+    }
+
 }
 
 // export const musicQueue = new MusicQueue()

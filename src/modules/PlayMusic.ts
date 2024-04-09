@@ -21,10 +21,12 @@ export function playMusic(
 	let initialResource;
 	let initialResourceMeta: DownloadedMetadata | undefined;
 
-	if (!interaction.guildId) return
+	if (!interaction.guildId) return;
 
-	const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(interaction.guildId)
-	
+	const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(
+		interaction.guildId
+	);
+
 	if (musicQueue.current) {
 		initialResourceMeta = musicQueue.current;
 		initialResource = createAudioResource(
@@ -52,7 +54,7 @@ export function playMusic(
 
 	player.on(AudioPlayerStatus.Idle, () => {
 		console.log("idle");
-		console.log("playlist", musicQueue.playlist);
+		// console.log("playlist", musicQueue.playlist);
 		if (musicQueue.empty()) {
 			return;
 		}
@@ -64,13 +66,12 @@ export function playMusic(
 
 		player.play(resource);
 		if (resourceMeta) {
+			const embed = NowPlayingEmbed({
+				musicName: resourceMeta.title,
+				videoId: resourceMeta.id,
+			});
 			interaction.channel?.send({
-				embeds: [
-					NowPlayingEmbed({
-						musicName: resourceMeta.title,
-						videoId: resourceMeta.id,
-					}),
-				],
+				embeds: [embed],
 			});
 		}
 	});

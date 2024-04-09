@@ -1,7 +1,6 @@
 import { EmbedBuilder } from "discord.js";
-import { randomEmbedColor } from "../../modules/RandomColor";
 
-export function AddMusicEmbed({
+export function AlreadyInQueueEmbed({
     musicName="music-name",
     videoId
 }:{
@@ -10,6 +9,6 @@ export function AddMusicEmbed({
 }):EmbedBuilder {
     return new EmbedBuilder()
         .setColor("Random")
-        .setDescription(`✅ **[${musicName}](https://www.youtube.com/watch?v=${videoId})** has been added to queue`)
+        .setDescription(`❌ **[${musicName}](https://www.youtube.com/watch?v=${videoId})** has already in queue!`)
         // .setDescription(`asdw`)
 }

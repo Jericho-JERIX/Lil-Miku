@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { randomEmbedColor } from "../../modules/RandomColor";
 
 export function NowPlayingEmbed({
-    musicName="[music name]",
+    musicName="music-name",
     videoId
 }:{
     musicName?: string

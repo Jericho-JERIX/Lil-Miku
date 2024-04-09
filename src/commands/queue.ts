@@ -30,15 +30,16 @@ export const Queue: SlashCommand = {
         console.log("WORK")
         console.log(!!queueString ? queueString : "*No music in queue*")
         console.log("-------")
+
+        const embed = MusicDashboardEmbed({
+            nowPlaying: currentSong?.title || "*No music playing*",
+            queue: !!queueString ? queueString : "*No music in queue*",
+            duration: durationString ? durationString : "-"
+        })
+        
         await interaction.reply({
-            // embeds:[
-            //     MusicDashboardEmbed({
-            //         nowPlaying: currentSong?.title || "*No music playing*",
-            //         queue: !!queueString ? queueString : "*No music in queue*",
-            //         duration: durationString ? durationString : "-"
-            //     })
-            // ]
-            content: `nowPlaying: ${currentSong?.title || "*No music playing*"}*\nqueue: ${!!queueString ? queueString : "*No music in queue*"}\nduration: ${durationString ? durationString : "-"}`
+            embeds:[embed]
+            // content: `nowPlaying: ${currentSong?.title || "*No music playing*"}*\nqueue: ${!!queueString ? queueString : "*No music in queue*"}\nduration: ${durationString ? durationString : "-"}`
         })
     }
 }

@@ -16,6 +16,7 @@ import {
 import { DownloadedMetadata } from "../types/DownloadedMetadata";
 import { AddMusicEmbed } from "../templates/components/AddMusic.embed";
 import { GuildMusicQueueData } from "../data/GuildMusicQueue";
+import { AlreadyInQueueEmbed } from "../templates/components/AlreadyInQueue.embed";
 
 /*
 - If there no current connection, create a new one and start the music
@@ -53,25 +54,33 @@ export const Play: SlashCommand = {
 		);
 
 		let downloadedMusicData: DownloadedMetadata | null = null;
-
-		console.log(searchResult);
-
+		let videoId = "";
 		switch (searchResult?.type) {
 			case "SEARCH":
 				const youtubeAPISearchResult =
 					await YoutubeGoogleAPIService.search.video(searchResult.id);
-				downloadedMusicData = await downloadMusicFromYoutube(
-					youtubeAPISearchResult[0].id.videoId
-				);
-				console.log(downloadedMusicData);
-				musicQueue.add(downloadedMusicData);
+				videoId = youtubeAPISearchResult[0].id.videoId;
 				break;
 
 			case "VIDEO":
-				downloadedMusicData = await downloadMusicFromYoutube(url);
-				musicQueue.add(downloadedMusicData);
+				videoId = url;
 				break;
 		}
+
+		const musicInQueue = musicQueue.get(YoutubeService.extractURL(url));
+		if (musicInQueue) {
+			const alreadyInQueueEmbed = AlreadyInQueueEmbed({
+				musicName: musicInQueue.title,
+				videoId: musicInQueue.id,
+			});
+			await interaction.editReply({
+				embeds: [alreadyInQueueEmbed],
+			});
+			return
+		}
+
+		downloadedMusicData = await YoutubeService.download(videoId);
+		musicQueue.add(downloadedMusicData);
 
 		if (
 			!downloadedMusicData ||
@@ -79,7 +88,7 @@ export const Play: SlashCommand = {
 			!interaction.guild ||
 			!voiceChannelId
 		) {
-			return;
+			return ;
 		}
 
 		if (!connection || connection.state.status === "disconnected") {
@@ -90,13 +99,14 @@ export const Play: SlashCommand = {
 			);
 			connection = connectionResult.connection;
 			player = connectionResult.player;
-
+			console.log("Just conected");
 			playMusic(connection, player, interaction);
 		}
 
 		if (player) {
 			console.log("Status", player.state.status);
 			if (player.state.status === "idle") {
+				console.log("Idle -> playmusic");
 				playMusic(connection, player, interaction);
 			} else if (player.state.status === "autopaused") {
 				console.log("Unpausing");
@@ -104,14 +114,14 @@ export const Play: SlashCommand = {
 			}
 		}
 
+		const addMusicEmbed = AddMusicEmbed({
+			musicName: downloadedMusicData.title,
+			videoId: downloadedMusicData.id,
+		});
+
 		await interaction.editReply({
-			// embeds: [
-			// 	AddMusicEmbed({
-			// 		musicName: downloadedMusicData.title,
-			// 		videoId: downloadedMusicData.id,
-			// 	}),
-			// ],
-			content: `Add [${downloadedMusicData.title}](https://www.youtube.com/watch?v=${downloadedMusicData.id})`
+			embeds: [addMusicEmbed],
+			// content: `Add [${downloadedMusicData.title}](https://www.youtube.com/watch?v=${downloadedMusicData.id})`
 		});
 	},
 };

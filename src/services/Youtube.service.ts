@@ -12,7 +12,7 @@ const CREDENTIAL = process.env.YOUTUBE_API_KEY
 export const YoutubeGoogleAPIService: YoutubeGoogleAPIServiceInterface = {
     search: {
         async video(keyword) {
-            const {data} = await axios.get(`https://youtube.googleapis.com/youtube/v3/search?q=${keyword}&type=video&maxResults=10&part=snippet&key=${CREDENTIAL}`)
+            const {data} = await axios.get(`https://youtube.googleapis.com/youtube/v3/search?q=${keyword}&type=video&maxResults=5&part=snippet&key=${CREDENTIAL}`)
             
             if ('error' in data) {
                 return []
