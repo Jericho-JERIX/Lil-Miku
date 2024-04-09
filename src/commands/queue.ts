@@ -32,9 +32,7 @@ export const Queue: SlashCommand = {
         console.log("-------")
 
         const embed = MusicDashboardEmbed({
-            nowPlaying: currentSong?.title || "*No music playing*",
-            queue: !!queueString ? queueString : "*No music in queue*",
-            duration: durationString ? durationString : "-"
+            musicQueue: musicQueue
         })
         
         await interaction.reply({

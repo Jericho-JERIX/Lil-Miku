@@ -27,8 +27,9 @@ export function playMusic(
 		interaction.guildId
 	);
 
-	if (musicQueue.current) {
-		initialResourceMeta = musicQueue.current;
+	if (musicQueue.getCurrent() && !musicQueue.getFinished()) {
+		initialResourceMeta = musicQueue.getCurrent();
+		if (!initialResourceMeta) return
 		initialResource = createAudioResource(
 			`src/music/${initialResourceMeta.id}.opus`
 		);
@@ -54,8 +55,11 @@ export function playMusic(
 
 	player.on(AudioPlayerStatus.Idle, () => {
 		console.log("idle");
+
+		musicQueue.markAsFinished()
 		// console.log("playlist", musicQueue.playlist);
 		if (musicQueue.empty()) {
+			console.log("Queue Empty")
 			return;
 		}
 

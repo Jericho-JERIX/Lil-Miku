@@ -45,10 +45,11 @@ export const Play: SlashCommand = {
 		if (!interaction.guildId) return;
 
 		const url = interaction.options.getString("query") as string;
+		const searchResult = YoutubeService.searchRecognizer(url);
+
 		const voiceChannelId = (interaction.member as GuildMember).voice.channel
 			?.id;
 
-		const searchResult = YoutubeService.searchRecognizer(url);
 		const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(
 			interaction.guildId
 		);
@@ -80,6 +81,7 @@ export const Play: SlashCommand = {
 		}
 
 		downloadedMusicData = await YoutubeService.download(videoId);
+		// downloadedMusicData = {id: "djK5-jtc8fc",title: "Test", duration:100};
 		musicQueue.add(downloadedMusicData);
 
 		if (
