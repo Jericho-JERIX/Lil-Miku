@@ -13,7 +13,8 @@ export const Queue: SlashCommand = {
 
         if (!interaction.guildId) return
 
-        const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(interaction.guildId)
+        const musicQueue = GuildMusicQueueData.get(interaction.guildId)
+        if (!musicQueue) return
         const queue = musicQueue.getPlaylist() //musicQueue.getPlaylist();
 
         const currentSong = musicQueue.getCurrent();

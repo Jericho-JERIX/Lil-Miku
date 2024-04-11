@@ -23,17 +23,22 @@ export function playMusic(
 
 	if (!interaction.guildId) return;
 
-	const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(
+	const musicQueue = GuildMusicQueueData.get(
 		interaction.guildId
 	);
 
+	if (!musicQueue) return
+
+	console.log("Init play -> ",musicQueue.getCurrent() , !musicQueue.getFinished())
 	if (musicQueue.getCurrent() && !musicQueue.getFinished()) {
+		console.log(1)
 		initialResourceMeta = musicQueue.getCurrent();
 		if (!initialResourceMeta) return
 		initialResource = createAudioResource(
 			`src/music/${initialResourceMeta.id}.opus`
 		);
 	} else {
+		console.log(2)
 		initialResourceMeta = musicQueue.dequeue();
 		initialResource = createAudioResource(
 			`src/music/${initialResourceMeta?.id}.opus`

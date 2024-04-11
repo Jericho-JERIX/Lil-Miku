@@ -23,8 +23,7 @@ import { AlreadyInQueueEmbed } from "../templates/components/AlreadyInQueue.embe
 - If there is a connection, add the music to the queue
 */
 
-let connection: VoiceConnection | undefined = undefined;
-let player: AudioPlayer | undefined = undefined;
+
 
 export const Play: SlashCommand = {
 	name: "play",
@@ -44,15 +43,36 @@ export const Play: SlashCommand = {
 
 		if (!interaction.guildId) return;
 
+		let connection: VoiceConnection | undefined = undefined;
+		let player: AudioPlayer | undefined = undefined;
 		const url = interaction.options.getString("query") as string;
 		const searchResult = YoutubeService.searchRecognizer(url);
 
 		const voiceChannelId = (interaction.member as GuildMember).voice.channel
 			?.id;
 
-		const musicQueue = GuildMusicQueueData.getOrCreateMusicQueue(
+		let musicQueue = GuildMusicQueueData.get(
 			interaction.guildId
 		);
+
+		if (!musicQueue) {
+			if (voiceChannelId && interaction.guild) {
+
+				musicQueue = GuildMusicQueueData.create(
+					voiceChannelId,
+					interaction.guild.id,
+					interaction.guild.voiceAdapterCreator
+				)
+				
+			}
+			else {
+				console.log("Music queuee not found")
+				return
+			}
+		}
+		
+		connection = musicQueue.connection
+		player = musicQueue.player
 
 		let downloadedMusicData: DownloadedMetadata | null = null;
 		let videoId = "";
@@ -77,6 +97,7 @@ export const Play: SlashCommand = {
 			await interaction.editReply({
 				embeds: [alreadyInQueueEmbed],
 			});
+			console.log("Allreay havee this music in queueu")
 			return
 		}
 
@@ -85,22 +106,21 @@ export const Play: SlashCommand = {
 		musicQueue.add(downloadedMusicData);
 
 		if (
-			!downloadedMusicData ||
-			!interaction.channel ||
-			!interaction.guild ||
-			!voiceChannelId
+			!connection ||
+			!player
 		) {
+			console.log("No player or connection",!connection,!player)
 			return ;
 		}
 
 		if (!connection || connection.state.status === "disconnected") {
-			const connectionResult = createVoiceChannelConnection(
-				voiceChannelId,
-				interaction.guild?.id,
-				interaction.guild?.voiceAdapterCreator
-			);
-			connection = connectionResult.connection;
-			player = connectionResult.player;
+			// const connectionResult = createVoiceChannelConnection(
+			// 	voiceChannelId,
+			// 	interaction.guild?.id,
+			// 	interaction.guild?.voiceAdapterCreator
+			// );
+			// connection = connectionResult.connection;
+			// player = connectionResult.player;
 			console.log("Just conected");
 			playMusic(connection, player, interaction);
 		}
@@ -120,7 +140,7 @@ export const Play: SlashCommand = {
 			musicName: downloadedMusicData.title,
 			videoId: downloadedMusicData.id,
 		});
-
+		console.log("Sending embed")
 		await interaction.editReply({
 			embeds: [addMusicEmbed],
 			// content: `Add [${downloadedMusicData.title}](https://www.youtube.com/watch?v=${downloadedMusicData.id})`
