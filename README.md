@@ -84,5 +84,6 @@ Remember to never share your token or client ID with anyone, as they can be used
 7. Run the bot by executing the following command:
 
     ```
+    source ./env/bin/activate # using virtual environment
     npm run dev
     ```
